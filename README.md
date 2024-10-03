@@ -33,3 +33,19 @@ $ rails test
 
 詳しくは、[*Ruby on Rails チュートリアル*](https://railstutorial.jp/)
 を参考にしてください。
+
+```bash
+poteto@envy-new:~/sample_app$ curl -o ./app/assets/images/kitten.jpg -L https://railstutorial.jp/chapters/7.0/images/figures/kitten.jpg
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 56741  100 56741    0     0  48619      0  0:00:01  0:00:01 --:--:-- 48662
+
+```
+
+*shift*,ctrl, *.* でerb
+
+```bash
+rails g integration_test site_layout
+ rails test: integration
+
+```
