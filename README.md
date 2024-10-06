@@ -49,3 +49,14 @@ rails g integration_test site_layout
  rails test: integration
 
 ```
+
+```bash
+poteto@envy-new:~/sample_app$  lsof -i :3000
+COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+ruby    26729 poteto    6u  IPv4 425868      0t0  TCP *:3000 (LISTEN)
+ruby    26729 poteto   12u  IPv4 612292      0t0  TCP localhost:3000->localhost:57726 (ESTABLISHED)
+ruby    26729 poteto   13u  IPv4 621662      0t0  TCP localhost:3000->localhost:57740 (CLOSE_WAIT)
+poteto@envy-new:~/sample_app$ kill -9 26729
+poteto@envy-new:~/sample_app$  lsof -i :3000
+
+```
