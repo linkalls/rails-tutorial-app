@@ -4,23 +4,20 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
-    # p params[:session][:email]
-    user = User.find_by(email: params[:session][:email].downcase)
-    if user&.authenticate(params[:session][:password])
+    @user = User.find_by(email: params[:session][:email].downcase)
+    if @user && @user.authenticate(params[:session][:password])
       reset_session
-      log_in(user) # sessionにいれる
-      redirect_to user
-
-      # ユーザーログイン後にユーザー情報のページにリダイレクトする
+      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+      log_in @user
+      redirect_to @user
     else
-      flash.now[:danger] = 'Invalid email/password combination' # 本当は正しくない
-      # render 'new', status: :unprocessable_entity
-      render 'new', status: :unprocessable_entity # render "newやで"
+      flash.now[:danger] = 'Invalid email/password combination'
+      render 'new', status: :unprocessable_entity
     end
   end
 
   def destroy
-    log_out
+    log_out if logged_in? # ログインしてる時のみ
     redirect_to root_url, status: :see_other
   end
 end
