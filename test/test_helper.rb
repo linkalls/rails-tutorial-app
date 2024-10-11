@@ -30,7 +30,7 @@ class ActionDispatch::IntegrationTest
       session: {
         email: user.email,
         password:, # 省略記法
-        remember_me:
+        remember_me: remember_me # rubocop:disable Style/HashSyntax
       }
     }
   end

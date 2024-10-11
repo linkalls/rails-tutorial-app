@@ -19,6 +19,10 @@ module SessionsHelper
     end
   end
 
+  def current_user?(user)
+    user && user == current_user
+  end
+
   # ユーザーがログインしていればtrue、その他ならfalseを返す
   def logged_in?
     !current_user.nil?
@@ -43,5 +47,10 @@ module SessionsHelper
     user.remember
     cookies.permanent.encrypted[:user_id] = user.id # 期限を20年にしたりしてる .encryptedで暗号化も(ハッシュ化じゃないよ)
     cookies.permanent[:remember_token] = user.remember_token
+  end
+
+  # アクセスしようとしたurlを保存
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get?
   end
 end

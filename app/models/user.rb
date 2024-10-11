@@ -8,7 +8,7 @@ class User < ApplicationRecord
                     # uniqueness: true
                     uniqueness: { case_sensitive: false } # 大文字小文字の区別なし
   has_secure_password
-  # validates :password, length: { minimum: 5 }
+  validates :password, length: { minimum: 5 }, allow_nil: true # 編集中に何も入れられなかったら今までのをそのまま
 
   # 渡された文字列のハッシュ値を返す
   def self.digest(string)
