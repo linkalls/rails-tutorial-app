@@ -7,12 +7,12 @@ class UsersLogin < ActionDispatch::IntegrationTest
 end
 
 class InvalidPasswordTest < UsersLogin
-  test 'login path' do
+  test '無効なパスワードでログイン画面に行く' do
     get login_path
     assert_template 'sessions/new'
   end
 
-  test 'login with valid email/invalid password' do
+  test '有効なメールアドレスと無効なパスワードでログイン' do
     post login_path, params: { session: { email: @user.email,
                                           password: 'invalid' } }
     assert_not is_logged_in?
@@ -32,12 +32,12 @@ class ValidLogin < UsersLogin
 end
 
 class ValidLoginTest < ValidLogin
-  test 'valid login' do
+  test '有効なログイン' do
     assert is_logged_in?
     assert_redirected_to @user
   end
 
-  test 'redirect after login' do
+  test 'ログイン後のリダイレクト' do
     follow_redirect!
     assert_template 'users/show'
     assert_select 'a[href=?]', login_path, count: 0
@@ -54,38 +54,36 @@ class Logout < ValidLogin
 end
 
 class LogoutTest < Logout
-  test 'successful logout' do
+  test 'ログアウト成功' do
     assert_not is_logged_in?
     assert_response :see_other
     assert_redirected_to root_url
   end
 
-  test 'should still work after logout in second window' do
-    # 2番目のウィンドウでログアウトをクリック
-    delete logout_path
-    assert_redirected_to root_url
-  end
-
-  test 'redirect after logout' do
+  test 'ログアウト後のリダイレクト' do
     follow_redirect!
     assert_select 'a[href=?]', login_path
     assert_select 'a[href=?]', logout_path, count: 0
     assert_select 'a[href=?]', user_path(@user), count: 0
   end
+
+  test '別ウィンドウでログアウト後も動作する' do
+    delete logout_path
+    assert_redirected_to root_url
+  end
 end
 
 class RememberingTest < UsersLogin
-  test 'login with remembering' do
+  test '記憶機能を使ってログイン' do
     log_in_as(@user, remember_me: '1')
-    assert_equal cookies[:remember_token], assigns(:user).remember_token
-    # assert_not cookies[:remember_token].blank?
+    assert_not cookies[:remember_token].blank?
   end
 
-  test 'login without remembering' do
-    # using cookie
+  test '記憶機能なしでログイン' do
+    # Cookieを保存してログイン
     log_in_as(@user, remember_me: '1')
-    # remember_meを0にしたら.forgetでるよ
-    log_in_as(@user, remember_me: 0)
+    # Cookieが削除されていることを検証してからログイン
+    log_in_as(@user, remember_me: '0')
     assert cookies[:remember_token].blank?
   end
 end

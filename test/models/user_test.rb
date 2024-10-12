@@ -47,7 +47,7 @@ class UserTest < ActiveSupport::TestCase
     assert_not duplicate_user.valid?
   end
 
-  test 'authenticated? should return false for a usee with nill digest' do
-    assert_not @user.authenticated?('') # remember_tokenを""のしたらfalse帰ってくればおけ
+  test 'authenticated? should return false for a use with nill digest' do
+    assert_not @user.authenticated?(:remember, '') # remember_tokenを""のしたらfalse帰ってくればおけ
   end
 end
