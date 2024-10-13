@@ -10,7 +10,7 @@ gem 'bootstrap-will_paginate', '1.0.0'
 gem 'faker', '3.4.2'
 gem 'rails', '~> 7.0.4', '>= 7.0.4.3'
 gem 'will_paginate', '3.3.1'
-
+gem 'rails-i18n'
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
 
