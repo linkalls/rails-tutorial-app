@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy # いっぱい持ってる destroyできるで
   attr_accessor :remember_token, :activation_token, :reset_token
 
   before_save :downcase_email
@@ -10,9 +11,10 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX },
                     # uniqueness: true
                     uniqueness: { case_sensitive: false } # 大文字小文字の区別なし
-  has_secure_password
+
   validates :password, length: { minimum: 5 }, allow_nil: true # 編集中に何も入れられなかったら今までのをそのまま
 
+  has_secure_password
   # 渡された文字列のハッシュ値を返す
   def self.digest(string)
     cost = if ActiveModel::SecurePassword.min_cost
@@ -79,6 +81,11 @@ class User < ApplicationRecord
 
   def password_reset_expired?
     reset_sent_at < 2.hours.ago # 2時間以内なら
+  end
+
+  # 　しさくふぃーど
+  def feed
+    Micropost.where('user_id = ?', id) # ?でエスケープ
   end
 
   private

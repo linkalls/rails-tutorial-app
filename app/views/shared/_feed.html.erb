@@ -1,0 +1,10 @@
+<% if @feed_items.any? %>
+  <ol class="microposts">
+    <%= render @feed_items %> <!-- @feed_itemのやつはぜんぶMicropost classを持ってるから microposts/_micropost.html.erbを勝手に呼ぶ -->
+  </ol>
+  <%= will_paginate @feed_items, params: {
+    controller: :static_pages,
+    action: :home
+  }
+  %>
+<% end %>

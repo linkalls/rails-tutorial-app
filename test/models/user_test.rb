@@ -50,4 +50,12 @@ class UserTest < ActiveSupport::TestCase
   test 'authenticated? should return false for a use with nill digest' do
     assert_not @user.authenticated?(:remember, '') # remember_tokenを""のしたらfalse帰ってくればおけ
   end
+
+  test 'アカウント削除するときにmicropostsも自動削除' do
+    @user.save
+    @user.microposts.create!(content: 'wcfwfw')
+    assert_difference 'Micropost.count', -1 do
+      @user.destroy
+    end
+  end
 end
