@@ -2,6 +2,18 @@ class User < ApplicationRecord
   has_many :microposts, dependent: :destroy # いっぱい持ってる destroyできるで
   attr_accessor :remember_token, :activation_token, :reset_token
 
+  has_many :active_relationships, class_name: 'Relationship',
+                                  foreign_key: 'follower_id',
+                                  dependent: :destroy
+
+  has_many :following, through: :active_relationships, source: :followed
+
+  has_many :passive_relationships, class_name: 'Relationship',
+                                   foreign_key: 'followed_id',
+                                   dependent: :destroy
+
+  has_many :followers, through: :passive_relationships, source: :follower
+
   before_save :downcase_email
   before_create :create_activation_digest
 
@@ -84,8 +96,38 @@ class User < ApplicationRecord
   end
 
   # 　しさくふぃーど
+  # def feed
+  #   Micropost.where('user_id = ?', id) # ?でエスケープ
+  # end
+
+  # ユーザーのステータスフィードを返す
   def feed
-    Micropost.where('user_id = ?', id) # ?でエスケープ
+    Micropost.where('user_id IN (:following_ids) OR user_id = :user_id',
+                    following_ids:, user_id: id)
+  end
+
+  # ユーザーをフォローする
+  def follow(other_user)
+    following.push(other_user) unless self == other_user
+  end
+
+  # フォロー解除するメソッド
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id)&.destroy
+  end
+
+  # ユーザーのステータスフィードを返す
+  def feed
+    following_ids = "SELECT followed_id FROM relationships
+                     WHERE  follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids})
+                     OR user_id = :user_id", user_id: id)
+             .includes(:user, image_attachment: :blob) # 全部一回で読み取る
+  end
+
+  # 現在のユーザーが他のユーザーをフォローしていればtrueを返す
+  def following?(other_user)
+    following.include?(other_user)
   end
 
   private

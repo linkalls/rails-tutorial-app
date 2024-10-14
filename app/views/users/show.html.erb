@@ -6,9 +6,20 @@
         <%= gravatar_for @user, size: 50 %>
         <%= @user.name %>
       </h1>
+      <section class="stats">
+        <%= render 'shared/stats' %>
+        <% if @users.any? %>
+          <div class="user_avatars">
+            <% @users.each do |user| %>
+              <%= link_to gravatar_for(user, size: 30), user %>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
     </section>
   </aside>
   <div class="col-md-8">
+    <%= render 'follow_form' if logged_in? %>
     <% if @user.microposts.any? %>
       <h3>Microposts (<%= @user.microposts.count %>)</h3>
       <ol class="microposts">
